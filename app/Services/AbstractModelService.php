@@ -17,9 +17,11 @@ abstract class AbstractModelService implements IModelService
 
     abstract protected static function getModelClass(): string;
 
-    public function findBy(int $limit): \Illuminate\Pagination\LengthAwarePaginator
+    public function findBy(array $criteria, int $limit): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return $this->model->paginate($limit)->withQueryString();
+        $query = $this->applyCriteria($this->model->query(), $criteria);
+        
+        return $query->paginate($limit)->withQueryString();
     }
 
     public function findById(int $id): Collection|Model
@@ -64,5 +66,14 @@ abstract class AbstractModelService implements IModelService
     public function destroy(int $id): bool
     {
         return $this->model->destroy($id);
+    }
+
+    protected function applyCriteria($query, array $criteria)
+    {
+        foreach ($criteria as $column => $value) {
+            $query->where($column, $value);
+        }
+
+        return $query;
     }
 }

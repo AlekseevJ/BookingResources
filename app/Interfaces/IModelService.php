@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface IModelService
 {
-    public function findBy(int $limit): \Illuminate\Pagination\LengthAwarePaginator;
+    public function findBy(array $criteria, int $limit): \Illuminate\Pagination\LengthAwarePaginator;
 
     public function findById(int $id): Collection|Model;
 
