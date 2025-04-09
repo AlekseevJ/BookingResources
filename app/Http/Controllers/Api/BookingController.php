@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Interfaces\IModelService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Resources\BookingResource;
 
 class BookingController extends Controller
 {
@@ -13,18 +14,18 @@ class BookingController extends Controller
     {
     }
 
-    public function getBookingsByResource(string $id): JsonResponse
+    public function getBookingsByResource(string $id): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $paginatedCollection = $this->service->findBy(['resource_id' => (int) $id], 15);
 
-        return response()->json($paginatedCollection, Response::HTTP_OK);
+        return BookingResource::collection($paginatedCollection);
     }
 
     public function create(\App\Http\Requests\Booking\CreateRequest $request): JsonResponse
     {
         $model = $this->service->create($request->validated());
 
-        return response()->json($model, Response::HTTP_CREATED);
+        return response()->json(new BookingResource($model), Response::HTTP_CREATED);
     }
 
     public function destroy(string $id): JsonResponse
